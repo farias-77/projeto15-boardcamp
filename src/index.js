@@ -5,13 +5,14 @@ import chalk from "chalk";
 dotenv.config();
 
 import categoriesRouter from "./routes/categoriesRouter.js";
+import gamesRouter from "./routes/gamesRouter.js";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 app.use(categoriesRouter);
-
+app.use(gamesRouter);
 
 
 
