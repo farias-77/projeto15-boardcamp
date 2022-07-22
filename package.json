@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19",
+    "pg": "^8.7.3"
+  },
+  "name": "projeto15-boardcamp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farias-77/projeto15-boardcamp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/farias-77/projeto15-boardcamp/issues"
+  },
+  "homepage": "https://github.com/farias-77/projeto15-boardcamp#readme",
+  "description": ""
+}
