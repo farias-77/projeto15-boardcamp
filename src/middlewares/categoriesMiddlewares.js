@@ -14,7 +14,7 @@ export async function emptyNameValidation(req, res, next){
     next();
 }
 
-export async function existentCategoryValidation(req, res, next){
+export async function categoryExistsValidation(req, res, next){
     const { name } = req.body;
 
     const categories = await connection.query('SELECT name FROM categories');
