@@ -36,3 +36,21 @@ export async function existentCpfValidation(req, res, next){
 
     next();
 }
+
+export async function idCpfValidation(req, res, next){
+
+    const customer = req.body;
+    const { id } = req.params;
+
+    const { rows: dbCustomer } = await connection.query(`
+        SELECT * 
+        FROM customers
+        WHERE customers.id = $1
+    `, [id]);
+
+    if(dbCustomer[0].cpf !== customer.cpf){
+        return res.status(409).send("Você não pode alterar o CPF cadastrado!");
+    }
+
+    next();
+}
