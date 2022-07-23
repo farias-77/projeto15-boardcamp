@@ -17,11 +17,15 @@ export async function emptyNameValidation(req, res, next){
 export async function categoryExistsValidation(req, res, next){
     const { name } = req.body;
 
-    const categories = await connection.query('SELECT name FROM categories');
+    try{
+        const categories = await connection.query('SELECT name FROM categories');
 
-    if(categories.rows.find(category => category.name === name)){
-        return res.status(409).send("Já existe uma categoria com esse nome!");
+        if(categories.rows.find(category => category.name === name)){
+            return res.status(409).send("Já existe uma categoria com esse nome!");
+        }
+
+        next();
+    }catch{
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente.");
     }
-
-    next();
 }

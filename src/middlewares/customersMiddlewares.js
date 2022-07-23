@@ -23,34 +23,42 @@ export async function existentCpfValidation(req, res, next){
 
     const { cpf } = req.body;
 
-    const dbCustomer = await connection.query(`
-        SELECT *  
-        FROM customers
-        WHERE customers.cpf = $1
-    `, [cpf]);
+    try{
+        const dbCustomer = await connection.query(`
+            SELECT *  
+            FROM customers
+            WHERE customers.cpf = $1
+        `, [cpf]);
 
 
-    if(dbCustomer.rows.length !== 0){
-        return res.status(409).send("CPF já cadastrado");
+        if(dbCustomer.rows.length !== 0){
+            return res.status(409).send("CPF já cadastrado");
+        }
+
+        next();
+    }catch{
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente");
     }
-
-    next();
 }
 
 export async function idCpfValidation(req, res, next){
 
-    const customer = req.body;
-    const { id } = req.params;
+    try{
+        const customer = req.body;
+        const { id } = req.params;
 
-    const { rows: dbCustomer } = await connection.query(`
-        SELECT * 
-        FROM customers
-        WHERE customers.id = $1
-    `, [id]);
+        const { rows: dbCustomer } = await connection.query(`
+            SELECT * 
+            FROM customers
+            WHERE customers.id = $1
+        `, [id]);
 
-    if(dbCustomer[0].cpf !== customer.cpf){
-        return res.status(409).send("Você não pode alterar o CPF cadastrado!");
+        if(dbCustomer[0].cpf !== customer.cpf){
+            return res.status(409).send("Você não pode alterar o CPF cadastrado!");
+        }
+
+        next();
+    }catch{
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente");
     }
-
-    next();
 }

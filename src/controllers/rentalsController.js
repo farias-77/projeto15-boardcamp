@@ -26,3 +26,23 @@ export async function postRental(req, res){
     
     res.send('siiu')
 }
+
+export async function getRentals(req, res){
+
+    try{
+
+        const { rows: rentals} = await connection.query(`
+            SELECT *, customers.id, customers.name, games.id, games.name, games."categoryId", games."categoryName"
+            FROM rentals
+            JOIN customers
+            ON customers.id = rentals."customerId"
+            JOIN games
+            ON games.id = rentals."gameId"
+        `);
+
+        return res.send(rentals);
+
+    }catch{
+        return res.send("Ocorreu um erro inesperado, tente novamente.");
+    }
+}

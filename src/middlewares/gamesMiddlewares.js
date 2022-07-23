@@ -16,26 +16,33 @@ export async function gameInfoValidation(req, res, next){
 }
 
 export async function categoryExistsValidation(req, res, next){
-    const gameInfo = req.body;
+    try{
+        const gameInfo = req.body;
 
-    const categories = await connection.query('SELECT id FROM categories');
+        const categories = await connection.query('SELECT id FROM categories');
 
-    if(!(categories.rows.find(category => category.id === gameInfo.categoryId))){
-        return res.sendStatus(400);
+        if(!(categories.rows.find(category => category.id === gameInfo.categoryId))){
+            return res.sendStatus(400);
+        }
+
+        next();
+    }catch{
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente");
     }
-
-    next();
 }
 
 export async function gameExistsValidation(req, res, next){
+    try{
+        const { name } = req.body;
+    
+        const names = await connection.query('SELECT name FROM games');
+        
+        if(names.rows.find(game => game.name === name)){
+            return res.status(409).send("Já existe um jogo com esse nome!");
+        }
 
-    const { name } = req.body;
-    
-    const names = await connection.query('SELECT name FROM games');
-    
-    if(names.rows.find(game => game.name === name)){
-        return res.status(409).send("Já existe um jogo com esse nome!");
+        next();
+    }catch{
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente");
     }
-
-    next();
 }
