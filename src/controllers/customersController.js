@@ -35,3 +35,20 @@ export async function getCustomers(req, res){
 
     res.status(200).send(customers);
 }
+
+export async function getCustomerById(req, res){
+
+    const { id } = req.params;
+
+    const customerById = await connection.query(`
+        SELECT *
+        FROM customers
+        WHERE customers.id = $1    
+    `, [id]);
+
+    if(customerById.rows.length === 0){
+        return res.status(404).send("Não existe um usuário com esse Id!");
+    }
+
+    res.send(customerById.rows);
+}
