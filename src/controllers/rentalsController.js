@@ -28,21 +28,42 @@ export async function postRental(req, res){
 }
 
 export async function getRentals(req, res){
-
     try{
-
-        const { rows: rentals} = await connection.query(`
-            SELECT *, customers.id, customers.name, games.id, games.name, games."categoryId", games."categoryName"
+        const { rows: rentals } = await connection.query(`
+            SELECT rentals.*, customers.id as "idCustomerTable", customers.name as "customerName", games.id as "idGameTable", games.name as "gameName", games."categoryId", categories.id as "idCategoryTable", categories.name as "categoryName"
             FROM rentals
             JOIN customers
             ON customers.id = rentals."customerId"
             JOIN games
             ON games.id = rentals."gameId"
+            JOIN categories
+            ON categories.id = games."categoryId"
         `);
 
-        return res.send(rentals);
+        const formattedRentals = rentals
+            .map(rental => {
+                const rentalModel = {
+                    ...rental, 
+                    customer:{id: rental.idCustomerTable, name: rental.customerName},
+                    game: { id: rental.idGameTable, name: rental.gameName, categoryId: rental.categoryId, categoryName: rental.categoryName }
+                }
+                
+                //rentalModel.rentDate = rentalModel.rentDate.slice(0,10);
+
+                delete rentalModel.idCustomerTable;
+                delete rentalModel.customerName;
+                delete rentalModel.idGameTable;
+                delete rentalModel.gameName;
+                delete rentalModel.categoryId;
+                delete rentalModel.categoryName;
+                delete rentalModel.idCategoryTable;
+
+                return rentalModel;
+            });
+
+        return res.send(formattedRentals);
 
     }catch{
-        return res.send("Ocorreu um erro inesperado, tente novamente.");
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente.");
     }
 }

@@ -1,19 +1,21 @@
 import connection from "../database/database.js";
 
 export async function postCustomer(req, res){
-    
-    const { name, phone, cpf, birthday } = req.body;
-    
     try{
-        const customer = await connection.query(`
+        let { name, phone, cpf, birthday } = req.body;
+        console.log(birthday);
+        birthday = dayjs(birthday).format("YYYY-MM-DD");
+        console.log(birthday);
+        
+        await connection.query(`
             INSERT INTO customers 
             ("name", "phone", "cpf", "birthday") 
             VALUES ($1, $2, $3, $4)`, 
             [name, phone, cpf, birthday]);
         
-        res.status(201).send("Usuário criado com sucesso!");
+        return res.status(201).send("Usuário criado com sucesso!");
     }catch{
-        res.status(500).send("Algo deu errado, por favor tente novamente.");
+        return res.status(500).send("Algo deu errado, por favor tente novamente.");
     }
 }
 
