@@ -102,3 +102,46 @@ export async function getPricePerDay(req, res, next){
         return res.status(500).send("Ocorreu um erro inesperado, tente novamente");
     }
 }
+
+export async function rentalExistsValidation(req, res, next){
+    try{
+        const { id } = req.params;
+
+        const { rows: rental } = await connection.query(`
+            SELECT * 
+            FROM rentals
+            WHERE rentals.id = $1
+        `, [id]);
+
+        if(rental.length === 0){
+            return res.status(404).send("Não foi encontrado nenhum aluguel com o id fornecido.");
+        }
+
+        res.locals.rental = rental[0];
+
+        next();
+    }catch{
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente");
+    }
+}
+
+export async function rentalFinishedValidation(req, res, next){
+
+    const rental = res.locals.rental;
+
+    if(rental.returnDate){
+        return res.status(400).send("Aluguel já finalizado");
+    }
+
+    next();
+}
+
+export async function rentalNotFinishedValidation(req, res, next){
+    const rental = res.locals.rental;
+
+    if(!rental.returnDate){
+        return res.status(400).send("Aluguel ainda não foi finalizado!");
+    }
+
+    next();
+}

@@ -2,10 +2,7 @@ import connection from "../database/database.js";
 
 export async function postCustomer(req, res){
     try{
-        let { name, phone, cpf, birthday } = req.body;
-        console.log(birthday);
-        birthday = dayjs(birthday).format("YYYY-MM-DD");
-        console.log(birthday);
+        const { name, phone, cpf, birthday } = req.body;
         
         await connection.query(`
             INSERT INTO customers 

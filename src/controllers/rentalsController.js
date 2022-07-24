@@ -67,3 +67,42 @@ export async function getRentals(req, res){
         return res.status(500).send("Ocorreu um erro inesperado, tente novamente.");
     }
 }
+
+export async function returnRental(req, res){
+    try{
+        const rental = res.locals.rental;
+
+        const rentDate = dayjs(rental.rentDate).format("YYYY-MM-DD");
+        const returnDate = dayjs().format("YYYY-MM-DD");
+
+        const diffInMs = new Date(returnDate) - new Date(rentDate);
+        const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+        
+        const delayFee = diffInDays * (rental.originalPrice/rental.daysRented);
+        
+        await connection.query(`
+        UPDATE rentals
+        SET "delayFee" = $1, "returnDate" = $2
+        WHERE rentals.id = $3
+        `, [delayFee, returnDate, rental.id]);
+
+        return res.status(200).send("Aluguel finalizado com sucesso.");
+    }catch{
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente");
+    }
+}
+
+export async function deleteRental(req, res){
+    try{
+        const rental = res.locals.rental;
+
+        await connection.query(`
+            DELETE FROM rentals
+            WHERE rentals.id = $1        
+        `, [rental.id]);
+
+        return res.status(200).send("Aluguel deletado com sucesso.");
+    }catch{
+        return res.status(500).send("Ocorreu um erro inesperado, tente novamente");
+    }
+}
