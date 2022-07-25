@@ -44,17 +44,17 @@ export async function getCustomerById(req, res){
     const { id } = req.params;
 
     try{
-        const customerById = await connection.query(`
+        const {rows: customerById} = await connection.query(`
             SELECT *
             FROM customers
             WHERE customers.id = $1    
         `, [id]);
 
-        if(customerById.rows.length === 0){
+        if(customerById.length === 0){
             return res.status(404).send("Não existe um usuário com esse Id!");
         }
 
-        return res.send(customerById.rows);
+        return res.send(customerById[0]);
     }catch{
         return res.status(500).send("Ocorreu um erro inesperado, tente novamente.");
     }
